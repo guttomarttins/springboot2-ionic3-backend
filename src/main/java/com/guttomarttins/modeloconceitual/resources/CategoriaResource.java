@@ -23,8 +23,8 @@ public class CategoriaResource {
 
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-	private ResponseEntity<?> find(@PathVariable Integer id) {
-		Categoria obj = service.buscar(id);
+	private ResponseEntity<Categoria> find(@PathVariable Integer id) {
+		Categoria obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
 	
@@ -35,17 +35,12 @@ public class CategoriaResource {
 		return ResponseEntity.created(uri).build();
 	}
 	
-//	@RequestMapping(method=RequestMethod.GET)
-//	private List<Categoria> listar() {
-//		
-//		Categoria cat1 = new Categoria(1, "Informática");
-//		Categoria cat2 = new Categoria(2, "Escritório");
-//		
-//		List<Categoria> lista = new ArrayList<>();
-//		lista.add(cat1);
-//		lista.add(cat2);
-//		
-//		return lista;
-//	}
+	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	private ResponseEntity<Void> update(@RequestBody Categoria obj, @PathVariable Integer id) {
+		obj.setId(id);
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
+	}
+	 
 	
 }
