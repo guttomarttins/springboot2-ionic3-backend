@@ -11,18 +11,16 @@ import com.guttomarttins.modeloconceitual.domain.Pedido;
 import com.guttomarttins.modeloconceitual.services.PedidoService;
 
 @RestController
-@RequestMapping(value="/pedidos")
+@RequestMapping(value = "/pedidos")
 public class PedidoResource {
-	
+
 	@Autowired
 	private PedidoService service;
 
-	
-	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	private ResponseEntity<Pedido> find(@PathVariable Integer id) {
 		Pedido obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
-	 
-	
+
 }
