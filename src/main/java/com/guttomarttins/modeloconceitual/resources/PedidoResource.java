@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.guttomarttins.modeloconceitual.domain.Categoria;
 import com.guttomarttins.modeloconceitual.domain.Pedido;
-import com.guttomarttins.modeloconceitual.dto.CategoriaDTO;
 import com.guttomarttins.modeloconceitual.services.PedidoService;
 
 @RestController
