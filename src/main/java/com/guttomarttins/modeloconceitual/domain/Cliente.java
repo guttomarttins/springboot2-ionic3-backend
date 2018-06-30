@@ -34,6 +34,7 @@ public class Cliente implements Serializable {
 	
 	private String cpfOuCnpj;
 	
+	@JsonIgnore
 	private Integer tipo;
 
 	@OneToMany(mappedBy = "cliente", cascade=CascadeType.ALL)

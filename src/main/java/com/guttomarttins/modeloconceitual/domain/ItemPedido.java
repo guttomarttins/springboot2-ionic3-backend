@@ -13,9 +13,9 @@ public class ItemPedido implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@JsonIgnore
-	@EmbeddedId 
+	@EmbeddedId
 	private ItemPedidoPK id = new ItemPedidoPK();
-	
+
 	private Double desconto;
 	private Integer quantidade;
 	private Double preco;
@@ -31,11 +31,11 @@ public class ItemPedido implements Serializable {
 		this.quantidade = quantidade;
 		this.preco = preco;
 	}
-	
+
 	public Double getSubTotal() {
 		return (preco - desconto) * quantidade;
 	}
-	
+
 	public ItemPedidoPK getId() {
 		return id;
 	}
@@ -72,17 +72,17 @@ public class ItemPedido implements Serializable {
 	public Pedido getPedido() {
 		return id.getPedido();
 	}
-	
+
 	public void setPedido(Pedido pedido) {
-	    id.setPedido(pedido);
+		id.setPedido(pedido);
 	}
 
 	public Produto getProduto() {
 		return id.getProduto();
 	}
-	
+
 	public void setProduto(Produto produto) {
-	    id.setProduto(produto);
+		id.setProduto(produto);
 	}
 
 	@Override
@@ -108,6 +108,20 @@ public class ItemPedido implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(getProduto().getNome());
+		builder.append(", Qte: ");
+		builder.append(getQuantidade());
+		builder.append(", Preço Unitário: ");
+		builder.append(getPreco());
+		builder.append(", Subtotal: ");
+		builder.append(getSubTotal());
+		builder.append("\n");
+		return builder.toString();
 	}
 
 }
