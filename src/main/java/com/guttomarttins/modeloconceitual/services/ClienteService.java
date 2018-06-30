@@ -15,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.guttomarttins.modeloconceitual.domain.Cidade;
 import com.guttomarttins.modeloconceitual.domain.Cliente;
 import com.guttomarttins.modeloconceitual.domain.Endereco;
+import com.guttomarttins.modeloconceitual.domain.enums.Perfil;
 import com.guttomarttins.modeloconceitual.domain.enums.TipoCliente;
 import com.guttomarttins.modeloconceitual.dto.ClienteDTO;
 import com.guttomarttins.modeloconceitual.dto.ClienteNewDTO;
 import com.guttomarttins.modeloconceitual.repositories.ClienteRepository;
 import com.guttomarttins.modeloconceitual.repositories.EnderecoRepository;
+import com.guttomarttins.modeloconceitual.security.UserSS;
+import com.guttomarttins.modeloconceitual.services.exceptions.AuthorizationException;
 import com.guttomarttins.modeloconceitual.services.exceptions.DataIntegrityException;
 import com.guttomarttins.modeloconceitual.services.exceptions.ObjectNotFoundException;
 
@@ -36,6 +39,13 @@ public class ClienteService {
 	private BCryptPasswordEncoder pe;
 
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		
+		if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id:" + id + ", Tipo: " + Cliente.class.getName()));
