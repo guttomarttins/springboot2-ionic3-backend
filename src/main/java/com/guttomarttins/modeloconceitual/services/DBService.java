@@ -20,6 +20,7 @@ import com.guttomarttins.modeloconceitual.domain.PagamentoComCartao;
 import com.guttomarttins.modeloconceitual.domain.Pedido;
 import com.guttomarttins.modeloconceitual.domain.Produto;
 import com.guttomarttins.modeloconceitual.domain.enums.EstadoPagamento;
+import com.guttomarttins.modeloconceitual.domain.enums.Perfil;
 import com.guttomarttins.modeloconceitual.domain.enums.TipoCliente;
 import com.guttomarttins.modeloconceitual.repositories.CategoriaRepository;
 import com.guttomarttins.modeloconceitual.repositories.CidadeRepository;
@@ -122,18 +123,25 @@ public class DBService {
 		estadoRepository.saveAll(Arrays.asList(est1, est2));
 		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
 
-		Cliente cl1 = new Cliente(null, "Carlos Martins", "guttomarttins@gmail.com", "453450387403",
+		Cliente cl1 = new Cliente(null, "Carlos Martins", "guttomarttins@gmail.com", "93595577736",
 				TipoCliente.PESSOAFISICA, pe.encode("123"));
 		cl1.getTelefones().addAll(Arrays.asList("23344523", "986753344"));
+		cl1.addPerfil(Perfil.ADMIN);
+		
+		Cliente cl2 = new Cliente(null, "Meu Cliente 1", "guttomarttins@outlook.com", "41842356208",
+				TipoCliente.PESSOAFISICA, pe.encode("123"));
+		cl2.getTelefones().addAll(Arrays.asList("76769698", "87875855"));
 
 		Endereco e1 = new Endereco(null, "Rua Brasil", "10", "Apt. 203", "Centro", "45434564", cl1, c1);
 		Endereco e2 = new Endereco(null, "Av Rio Branco", "1", "Sala 10", "Centro", "45768903", cl1, c2);
+		Endereco e3 = new Endereco(null, "Rua do Arroz", "101", null, "Penha", "45768903", cl2, c2);
 
 		cl1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		cl2.getEnderecos().addAll(Arrays.asList(e3));
 
-		clienteRepository.save(cl1);
+		clienteRepository.saveAll(Arrays.asList(cl1, cl2));
 
-		enderecoRepository.saveAll(Arrays.asList(e1, e2));
+		enderecoRepository.saveAll(Arrays.asList(e1, e2, e3));
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		Pedido ped1 = new Pedido(null, sdf.parse("25/06/2018 07:58"), cl1, e1);
