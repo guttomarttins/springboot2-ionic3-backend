@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.guttomarttins.modeloconceitual.domain.Categoria;
@@ -35,22 +36,33 @@ public class DBService {
 
 	@Autowired
 	private CategoriaRepository categoriaRepository;
+	
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	
 	@Autowired
 	private EstadoRepository estadoRepository;
+	
 	@Autowired
 	private CidadeRepository cidadeRepository;
+	
 	@Autowired
 	private ClienteRepository clienteRepository;
+	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
 	@Autowired
 	private PedidoRepository pedidoRepository;
+	
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
+	
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
+	
+	@Autowired
+	private BCryptPasswordEncoder pe;
 
 	public void instantiateTestDataBase() throws ParseException {
 
@@ -110,7 +122,8 @@ public class DBService {
 		estadoRepository.saveAll(Arrays.asList(est1, est2));
 		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
 
-		Cliente cl1 = new Cliente(null, "Carlos Martins", "guttomarttins@gmail.com", "453450387403", TipoCliente.PESSOAFISICA);
+		Cliente cl1 = new Cliente(null, "Carlos Martins", "guttomarttins@gmail.com", "453450387403",
+				TipoCliente.PESSOAFISICA, pe.encode("123"));
 		cl1.getTelefones().addAll(Arrays.asList("23344523", "986753344"));
 
 		Endereco e1 = new Endereco(null, "Rua Brasil", "10", "Apt. 203", "Centro", "45434564", cl1, c1);
@@ -129,7 +142,8 @@ public class DBService {
 		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
 		ped1.setPagamento(pagto1);
 
-		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/07/2018 00:00"), null);
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/07/2018 00:00"),
+				null);
 		ped2.setPagamento(pagto2);
 
 		cl1.getPedidos().addAll(Arrays.asList(ped1, ped2));
