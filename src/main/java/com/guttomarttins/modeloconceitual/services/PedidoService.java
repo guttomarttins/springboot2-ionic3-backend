@@ -4,8 +4,12 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.guttomarttins.modeloconceitual.domain.Cliente;
 import com.guttomarttins.modeloconceitual.domain.ItemPedido;
 import com.guttomarttins.modeloconceitual.domain.PagamentoComBoleto;
 import com.guttomarttins.modeloconceitual.domain.Pedido;
@@ -13,6 +17,8 @@ import com.guttomarttins.modeloconceitual.domain.enums.EstadoPagamento;
 import com.guttomarttins.modeloconceitual.repositories.ItemPedidoRepository;
 import com.guttomarttins.modeloconceitual.repositories.PagamentoRepository;
 import com.guttomarttins.modeloconceitual.repositories.PedidoRepository;
+import com.guttomarttins.modeloconceitual.security.UserSS;
+import com.guttomarttins.modeloconceitual.services.exceptions.AuthorizationException;
 import com.guttomarttins.modeloconceitual.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -20,25 +26,25 @@ public class PedidoService {
 
 	@Autowired
 	private PedidoRepository repo;
-	
+
 	@Autowired
 	private BoletoService boletoService;
-	
+
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
-	
+
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
-	
+
 	@Autowired
 	private ProdutoService produtoService;
-	
+
 	@Autowired
 	private ClienteService clienteService;
-	
+
 	@Autowired
 	private EmailService emailService;
-	
+
 	public Pedido find(Integer id) {
 		Optional<Pedido> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
@@ -67,4 +73,15 @@ public class PedidoService {
 		emailService.sendOrderConfirmationHtmlEmail(obj);
 		return obj;
 	}
+
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSS user = UserService.authenticated();
+		if(user == null) {
+			throw new AuthorizationException("Acesso Negado");
+		}
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Cliente cliente = clienteService.find(user.getId()); 
+		return repo.findByCliente(cliente, pageRequest);
+	}
+
 }
