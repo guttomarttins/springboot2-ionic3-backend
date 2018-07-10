@@ -32,7 +32,7 @@ import com.guttomarttins.modeloconceitual.services.exceptions.ObjectNotFoundExce
 
 @Service
 public class ClienteService {
-
+	
 	@Autowired
 	private ClienteRepository repo;
 
@@ -44,16 +44,15 @@ public class ClienteService {
 
 	@Autowired
 	private S3Service s3Service;
-	
+
 	@Autowired
 	private ImageService imageService;
-	
-	@Value("${img.prefix.client.profile}") 
+
+	@Value("${img.prefix.client.profile}")
 	private String prefix;
-	
-	@Value("${img.profile.size}") 
+
+	@Value("${img.profile.size}")
 	private Integer size;
-	
 
 	public Cliente find(Integer id) {
 
@@ -66,6 +65,31 @@ public class ClienteService {
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id:" + id + ", Tipo: " + Cliente.class.getName()));
+	}
+
+	public Cliente findById(Integer id) {
+
+		Optional<Cliente> obj = repo.findById(id);
+		return obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não encontrado! Id:" + id + ", Tipo: " + Cliente.class.getName()));
+	}
+	
+
+	public Cliente findByEmail(String email) {
+        
+		UserSS user = UserService.authenticated();
+		
+		if (user == null || !user.hasRole(Perfil.ADMIN) && !email.equals(user.getUsername())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
+		Cliente obj = repo.findByEmail(email);
+
+		if (obj == null ) {
+			throw new ObjectNotFoundException("Objeto não encontrado" + email + ", Tipo: " + Cliente.class.getName());
+		}
+		
+		return obj;
 	}
 
 	@Transactional
@@ -136,9 +160,9 @@ public class ClienteService {
 		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
 		jpgImage = imageService.cropSquare(jpgImage);
 		jpgImage = imageService.resize(jpgImage, size);
-		
+
 		String fileName = prefix + user.getId() + ".jpg";
-		
+
 		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
 	}
 }
